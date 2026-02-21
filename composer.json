@@ -1,5 +1,5 @@
 {
-    "name": "AurexEngine/AurexEngine",
+    "name": "aurexengine/aurexengine",
     "description": "AurexEngine core components for building modular PHP frameworks and applications.",
     "type": "library",
     "license": "MIT",
