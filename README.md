@@ -1,17 +1,5 @@
 # AurexEngine
 
-A lightweight PHP application framework used for learning and experimentation.
-
-## Getting Started
-
-- Install dependencies: `composer install`
-- Run the app with a PHP built-in server or your preferred web server.
-
-## License
-
-See the `LICENSE` file for license details.
-# AurexEngine
-
 <p align="center">
   <strong>AurexEngine</strong><br>
   A modular PHP runtime engine for building modern frameworks.
