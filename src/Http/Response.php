@@ -10,9 +10,9 @@ class Response
         public array $headers = ['content-type' => 'text/html; charset=UTF-8']
     ) {}
 
-    public static function json(array $data, int $status = 200): static
+    public static function json(array $data, int $status = 200): self
     {
-        return new static(
+        return new self(
             content: json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
             status: $status,
             headers: ['content-type' => 'application/json; charset=UTF-8']
@@ -28,10 +28,10 @@ class Response
         echo $this->content;
     }
 
-    public static function redirect(string $to, int $status = 302, array $headers = []): static
+    public static function redirect(string $to, int $status = 302, array $headers = []): self
     {
         $headers['Location'] = $to;
 
-        return new static('', $status, $headers);
+        return new self('', $status, $headers);
     }
 }

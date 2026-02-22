@@ -12,7 +12,8 @@ class Dispatcher
     public function __construct(
         protected Router $router,
         protected Container $container
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<int, callable|string> $globalMiddleware
@@ -50,7 +51,7 @@ class Dispatcher
                     }
 
                     $resolver = new ControllerResolver($this->container);
-                    return $resolver->call($handler, $request);
+                    return $resolver->call($handler, $request, $request->params ?? []);
                 }
 
                 // callable handler
@@ -75,17 +76,18 @@ class Dispatcher
      */
     private function sortMiddlewareByPriority(array $middleware, array $priority): array
     {
-        // Only sort class-string middleware. Callables stay in place relative to each other.
         $priorityIndex = array_flip($priority);
 
         usort($middleware, function ($a, $b) use ($priorityIndex) {
-            $aIsClass = is_string($a);
-            $bIsClass = is_string($b);
+            $aIsClass = is_string($a) && class_exists($a);
+            $bIsClass = is_string($b) && class_exists($b);
 
-            // Keep callables stable relative to classes (classes can move around them)
-            if (!$aIsClass && !$bIsClass) return 0;
-            if (!$aIsClass && $bIsClass)  return 1;
-            if ($aIsClass && !$bIsClass)  return -1;
+            if (!$aIsClass && !$bIsClass)
+                return 0;
+            if (!$aIsClass && $bIsClass)
+                return 1;
+            if ($aIsClass && !$bIsClass)
+                return -1;
 
             $ai = $priorityIndex[$a] ?? PHP_INT_MAX;
             $bi = $priorityIndex[$b] ?? PHP_INT_MAX;

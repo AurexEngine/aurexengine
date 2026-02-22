@@ -3,6 +3,7 @@
 namespace AurexEngine\Http;
 
 use AurexEngine\Routing\Dispatcher;
+use AurexEngine\Foundation\Exceptions\Handler;
 
 class Kernel
 {
@@ -13,7 +14,11 @@ class Kernel
     /** @var array<int, class-string> */
     protected array $middlewarePriority = [];
 
-    public function __construct(protected Dispatcher $dispatcher) {}
+    public function __construct(
+        protected Dispatcher $dispatcher,
+        protected Handler $exceptions
+    ) {
+    }
 
     public function middleware(array $middleware): self
     {
@@ -25,14 +30,17 @@ class Kernel
     {
         $this->middlewareInstances = [];
 
-        return $this->dispatcher->dispatch(
-            $request,
-            $this->middleware,
-            function (object $mw): void {
-                $this->middlewareInstances[] = $mw;
-            },
-            $this->middlewarePriority
-        );
+        try {
+            return $this->dispatcher->dispatch(
+                $request,
+                $this->middleware,
+                function (object $mw): void {
+                    $this->middlewareInstances[] = $mw;
+                }
+            );
+        } catch (\Throwable $e) {
+            return $this->exceptions->render($request, $e);
+        }
     }
 
     public function terminate(Request $request, Response $response): void

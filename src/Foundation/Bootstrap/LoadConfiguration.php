@@ -24,6 +24,9 @@ class LoadConfiguration
             }
         }
 
-        $app->instance('config', new ConfigRepository($items));
+        $repo = new ConfigRepository($items);
+
+        $app->instance('config', $repo);
+        $app->instance(ConfigRepository::class, $repo);
     }
 }
